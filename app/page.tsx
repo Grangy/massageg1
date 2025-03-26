@@ -113,7 +113,7 @@ export default function HomePage() {
             </div>
             <div className="text-content mt-4">
               <h2 className="text-2xl font-bold text-stone-900 mb-2">Специальное предложение!</h2>
-              <p className="text-stone-800 mb-4">Получите 20% скидку на первую сессию массажа!</p>
+              <p className="text-stone-800 mb-4">Получите 10% скидку на первую сессию массажа!</p>
             </div>
             <form className="contact-form flex flex-col" onSubmit={handleSubmit}>
               {formStatus === "idle" && (
