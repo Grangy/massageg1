@@ -78,7 +78,7 @@ const massages = [
 export default function MassageSlider({ setSelectedMassage }: { setSelectedMassage: (massage: string) => void }) {
     return (
       <section id="massageSlider" className="my-8">
-        <h2 className="text-2xl font-bold text-center mb-6 text-white">Наши виды массажа</h2>
+        <h2 className="text-2xl font-bold text-center mb-6 text-white">Наши виды спа-массажа</h2>
         <Swiper
           modules={[Navigation, Pagination]}
           spaceBetween={20}
