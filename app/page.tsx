@@ -1,103 +1,177 @@
+// app/page.tsx
+"use client";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Image from "next/image";
+import AnimatedBackground from "@/app/components/AnimatedBackground";
+import HeroSection from "@/app/components/HeroSection";
+import MassageSlider from "@/app/components/MassageSlider";
+import BookingForm from "@/app/components/BookingForm";
+import Navbar from "@/app/components/Navbar";
+import ContactSection from "@/app/components/ContactSection";
+import TestimonialSlider from "@/app/components/TestimonialSlider";
 
-export default function Home() {
+const leftToRightVariant = {
+  hidden: { opacity: 0, x: -100 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+};
+
+const rightToLeftVariant = {
+  hidden: { opacity: 0, x: 100 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5 } },
+};
+
+export default function HomePage() {
+  const [selectedMassage, setSelectedMassage] = useState("");
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const closePopup = () => setIsPopupOpen(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsPopupOpen(true), 17000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const form = e.target as HTMLFormElement;
+    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value;
+
+    try {
+      const res = await fetch("/api/book-appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: "Промо", phone, date: new Date().toISOString() }),
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setFormStatus("success");
+        setTimeout(() => {
+          closePopup();
+          setFormStatus("idle");
+          setIsSubmitting(false);
+        }, 3000);
+      } else {
+        setFormStatus("error");
+        setIsSubmitting(false);
+      }
+    } catch {
+      setFormStatus("error");
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <AnimatedBackground>
+      <Navbar />
+      <div className="container mx-auto p-4">
+        <motion.div initial="hidden" animate="visible" variants={leftToRightVariant} transition={{ delay: 0 }}>
+          <HeroSection />
+        </motion.div>
+        <motion.div initial="hidden" animate="visible" variants={rightToLeftVariant} transition={{ delay: 1.5 }}>
+          <MassageSlider setSelectedMassage={setSelectedMassage} />
+        </motion.div>
+        <motion.div initial="hidden" animate="visible" variants={leftToRightVariant} transition={{ delay: 3 }}>
+          <BookingForm selectedMassage={selectedMassage} />
+          <TestimonialSlider />
+        </motion.div>
+      </div>
+      <ContactSection />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      {/* Попап */}
+      {isPopupOpen && (
+        <motion.div
+          className="popup fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          onClick={closePopup}
+        >
+          <div
+            className="popup-content bg-stone-200 rounded-lg shadow-lg p-6 w-full max-w-lg mx-4 relative overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+            <button
+              className="close-button absolute top-2 right-2 text-stone-900 text-2xl cursor-pointer hover:text-stone-600 transition-colors z-10"
+              onClick={closePopup}
+            >
+              ×
+            </button>
+            <div className="image-container relative w-full" style={{ aspectRatio: "16/9" }}>
+              <Image
+                src="/image/massage.webp"
+                alt="Акция"
+                fill
+                style={{ objectFit: "cover" }}
+                className="rounded-lg shadow-md"
+              />
+            </div>
+            <div className="text-content mt-4">
+              <h2 className="text-2xl font-bold text-stone-900 mb-2">Специальное предложение!</h2>
+              <p className="text-stone-800 mb-4">Получите 20% скидку на первую сессию массажа!</p>
+            </div>
+            <form className="contact-form flex flex-col" onSubmit={handleSubmit}>
+              {formStatus === "idle" && (
+                <>
+                  <label htmlFor="phone" className="text-stone-900 mb-2 font-medium">
+                    Ваш номер телефона:
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    className="mb-4 p-2 border border-stone-300 bg-stone-100 text-stone-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 transition-all"
+                    placeholder="+7 (___) ___-__-__"
+                    required
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="submit"
+                    className="py-2 px-4 bg-stone-700 text-white rounded-lg hover:bg-stone-600 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed flex items-center justify-center"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                    ) : null}
+                    {isSubmitting ? "Отправка..." : "Запросить звонок"}
+                  </button>
+                </>
+              )}
+              {formStatus === "success" && (
+                <motion.div
+                  className="p-4 bg-green-100 text-green-800 rounded-lg text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="font-semibold">Спасибо! Мы скоро свяжемся с вами.</p>
+                </motion.div>
+              )}
+              {formStatus === "error" && (
+                <motion.div
+                  className="p-4 bg-red-100 text-red-800 rounded-lg text-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <p className="font-semibold">Ошибка. Попробуйте снова.</p>
+                  <button
+                    className="mt-2 text-sm underline hover:text-red-600"
+                    onClick={() => setFormStatus("idle")}
+                  >
+                    Повторить
+                  </button>
+                </motion.div>
+              )}
+            </form>
+          </div>
+        </motion.div>
+      )}
+    </AnimatedBackground>
   );
 }

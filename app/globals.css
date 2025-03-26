@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Lato';
+  src: url('/Lato/Lato-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -22,5 +29,28 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Lato', Arial, Helvetica, sans-serif;
+}
+
+/* Анимированный фон */
+.animated-bg {
+  /* background: linear-gradient(270deg, #0f0e08, #1c1b0d, #211c16); */
+  background-color: #131313;
+  background-size: 100% 400%;
+  animation: bg-animate 15s ease infinite;
+}
+
+/* Прелоадер (круговой спиннер) */
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 64px;
+  height: 64px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
