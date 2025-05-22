@@ -1,134 +1,166 @@
-// app/components/MassageSlider.tsx
 "use client";
 
 import React from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { FaRegClock, FaRubleSign } from 'react-icons/fa';
+import { FaRegClock, FaRubleSign, FaTag } from 'react-icons/fa';
+import Image from 'next/image';
 
 const massages = [
   {
     id: 1,
-    title: "Экспресс спа-массаж одной зоны",
-    time: "от 10 мин",
-    price: "500 ₽",
-    description: "Быстрая процедура для одной зоны с акцентом на релаксацию.",
+    title: "Аромапарение + Массаж спортивный",
+    time: "60 мин",
+    originalPrice: "4000 ₽",
+    discountedPrice: "2600 ₽",
+    description:
+      "В самое жаркое время года, наш организм очень требует детокса, прогрейся перед качественным массажем выполненым профессионалами и оздоровись с помощью аромапарения, в индивидуальной парной и ароматом выбранным вами.",
+    image: "/image/aromo.png",
   },
   {
     id: 2,
-    title: "Релаксационная процедура для лица",
-    time: "20 мин",
-    price: "1 200 ₽",
-    packagePrice: "Пакет на 5 услуг: 5 400 ₽",
-    description: "Уход за лицом для восстановления свежести и красоты кожи.",
+    title: "Массаж спортивный + Солевой пилинг",
+    time: "60 мин",
+    originalPrice: "7000 ₽",
+    discountedPrice: "5000 ₽",
+    description:
+      "Массаж по настоящему перезагрузит ваше тело, вы получите долгожданный отдых и удовольствие, после чего соляной пилинг очистит ваши поры и кожу, а также соль вытащит всю лишнюю жидкость из вашего организма.",
+    image: "/image/solevoy.png",
   },
   {
     id: 3,
-    title: "Спа-массаж одной зоны (на выбор)",
-    time: "20 мин",
-    price: "1 350 ₽",
-    packagePrice: "Пакет на 5 услуг: 6 400 ₽",
-    description: "Процедура для головы, рук, ног или шейно-воротниковой зоны с индивидуальным подходом.",
+    title: "Массаж спортивный + Мыльно-березовый омолаживающий массаж",
+    time: "60 мин",
+    originalPrice: "7000 ₽",
+    discountedPrice: "5000 ₽",
+    description:
+      "Сначала мастер проработает каждую вашу мышцу, после чего он выполнит великолепную процедуру для очистки вашего тела, с помощью нежного березового веника и банного мыла.",
+    image: "/image/bereza.png",
   },
   {
     id: 4,
-    title: "Релаксационная процедура лицо + декольте",
-    time: "30 мин",
-    price: "1 700 ₽",
-    packagePrice: "Пакет на 5 услуг: 7 650 ₽",
-    description: "Комплексный уход за лицом и декольте для омоложения и релаксации.",
+    title: "Баночный массаж",
+    time: "30-40 мин",
+    originalPrice: "2000 ₽",
+    discountedPrice: null,
+    description: "Традиционная техника для улучшения кровообращения и снятия мышечного напряжения с использованием банок.",
+    image: "/image/banka.png",
   },
   {
     id: 5,
-    title: "Процедура «Интенсив» (ноги + спина)",
-    time: "40 мин",
-    price: "2 000 ₽",
-    packagePrice: "Пакет на 5 услуг: 9 000 ₽",
-    description: "Интенсивная проработка задней поверхности ног и спины для глубокого расслабления.",
+    title: "Массаж даосскими вениками",
+    time: "30 мин",
+    originalPrice: "3000 ₽",
+    discountedPrice: null,
+    description: "Уникальная техника массажа с использованием даосских веников для гармонизации энергии тела.",
+    image: "/image/daos.png",
   },
   {
     id: 6,
-    title: "Спортивный/лимфодренажный/миофасциальный массаж",
-    time: "60 мин",
-    price: "2 650 ₽",
-    packagePrice: "Пакет на 5 услуг: 11 925 ₽",
-    description: "Процедура для восстановления мышц после тренировок и устранения болей.",
+    title: "Медовый массаж одной зоны",
+    time: "45 мин",
+    originalPrice: "2200 ₽",
+    discountedPrice: null,
+    description: "Питательный массаж с использованием натурального меда для увлажнения кожи и снятия напряжения.",
+    image: "/image/honey.png",
   },
   {
     id: 7,
-    title: "Антицеллюлитный спа-массаж",
-    time: "45 мин",
-    price: "3 000 ₽",
-    packagePrice: "Пакет на 5 услуг: 13 500 ₽",
-    description: "Процедура для борьбы с целлюлитом и улучшения тонуса кожи.",
-  },
-  {
-    id: 8,
-    title: "Общий спа-массаж",
-    time: "80 мин",
-    price: "3 750 ₽",
-    packagePrice: "Пакет на 5 услуг: 16 800 ₽",
-    description: "Комплексный массаж для полного расслабления и восстановления организма.",
+    title: "Стоун массаж",
+    time: "60 мин",
+    originalPrice: "3000 ₽",
+    discountedPrice: null,
+    description: "Расслабляющий массаж с использованием горячих камней для глубокого прогрева и релаксации.",
+    image: "/image/stone.png",
   },
 ];
 
 export default function MassageSlider({ setSelectedMassage }: { setSelectedMassage: (massage: string) => void }) {
-    return (
-      <section id="massageSlider" className="my-8">
-        <h2 className="text-2xl font-bold text-center mb-6 text-white">Наши виды спа-массажа</h2>
-        <Swiper
-          modules={[Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          breakpoints={{
-            640: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
-          }}
-        >
-          {massages.map((massage) => (
-            <SwiperSlide key={massage.id}>
-              <div className="bg-stone-600 rounded-lg shadow-lg p-6 flex flex-col justify-between h-full min-h-[300px] transform transition duration-300 hover:scale-105">
-                <div className="flex-grow">
-                  <h3 className="text-xl font-semibold mb-2 text-white">{massage.title}</h3>
-                  <p className="text-white mb-4">{massage.description}</p>
-                  <div className="flex items-center text-gray-600 mb-2">
-                    <FaRegClock className="mr-2 text-white" />
-                    <span className='text-white'>{massage.time}</span>
-                  </div>
-                  <div className="flex items-center text-gray-600 text-white">
-                    <FaRubleSign className="mr-2 text-gray-300" />
-                    <span className='text-gray-300'>{massage.price}</span>
-                  </div>
-                  {massage.packagePrice && (
-                    <div className="text-sm text-gray-300 mt-1">
-                      {massage.packagePrice}
+  return (
+    <section id="massageSlider" className="my-12 px-4">
+      <h2 className="text-3xl font-bold text-center mb-8 text-white tracking-tight">Наши виды спа-массажа</h2>
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        spaceBetween={30}
+        slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
+        autoplay={{ delay: 5000, disableOnInteraction: true }}
+        breakpoints={{
+          640: { slidesPerView: 2, spaceBetween: 20 },
+          1024: { slidesPerView: 3, spaceBetween: 30 },
+          1280: { slidesPerView: 4, spaceBetween: 40 },
+        }}
+        className="pb-12"
+      >
+        {massages.map((massage) => (
+          <SwiperSlide key={massage.id}>
+            <div
+              className="bg-stone-700 rounded-xl shadow-xl p-6 flex flex-col justify-between h-full min-h-[450px] transform transition duration-300 hover:scale-105 hover:shadow-2xl focus-within:shadow-2xl"
+              role="region"
+              aria-label={`Массаж: ${massage.title}`}
+              tabIndex={0}
+              onClick={() => setSelectedMassage(massage.title)}
+            >
+              <div className="flex-grow">
+                <div className="relative w-full h-48 mb-4">
+                  <Image
+                    src={massage.image}
+                    alt={massage.title}
+                    fill
+                    className="object-cover rounded-lg"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    loading="lazy"
+                  />
+                </div>
+                <h3 className="text-2xl font-semibold mb-3 text-white">{massage.title}</h3>
+                <p className="text-gray-200 text-sm mb-4 leading-relaxed">{massage.description}</p>
+                <div className="flex items-center text-gray-300 mb-2">
+                  <FaRegClock className="mr-2 text-amber-400" size={20} />
+                  <span>{massage.time}</span>
+                </div>
+                <div className="flex items-center text-gray-300 mb-2">
+                  <FaRubleSign className="mr-2 text-amber-400" size={20} />
+                  {massage.discountedPrice ? (
+                    <div className="flex items-center space-x-2">
+                      <span className="text-gray-400 line-through">{massage.originalPrice}</span>
+                      <span className="text-white font-semibold">{massage.discountedPrice}</span>
                     </div>
+                  ) : (
+                    <span>{massage.originalPrice}</span>
                   )}
                 </div>
-                <div className="mt-4 flex space-x-2">
-                  <a
-                    href="#bookingForm"
-                    onClick={() => setSelectedMassage(massage.title)}
-                    className="flex-1 text-center py-2 px-4 bg-stone-900 text-white rounded hover:bg-stone-700 transition-colors"
-                  >
-                    Записаться
-                  </a>
-                  <a
-                    href="#bookingForm"
-                    className="flex-1 text-center py-2 px-4 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
-                  >
-                    Подробнее
-                  </a>
-                </div>
+                {massage.discountedPrice && (
+                  <div className="flex items-center text-sm text-white mt-1">
+                    <FaTag className="mr-2" size={16} />
+                    <span>Скидка</span>
+                  </div>
+                )}
               </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </section>
-    );
-  }
+              <div className="mt-6 flex space-x-4">
+                <a
+                  href="#bookingForm"
+                  onClick={() => setSelectedMassage(massage.title)}
+                  className="flex-1 text-center py-3 px-4 bg-white text-stone-900 rounded-lg hover:bg-amber-400 transition-colors duration-200 font-semibold"
+                  aria-label={`Записаться на ${massage.title}`}
+                >
+                  Записаться
+                </a>
+                <a
+                  href="#bookingForm"
+                  className="flex-1 text-center py-3 px-4 bg-stone-500 text-white rounded-lg hover:bg-stone-600 transition-colors duration-200 font-semibold"
+                  aria-label={`Подробнее о ${massage.title}`}
+                >
+                  Подробнее
+                </a>
+              </div>
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
+    </section>
+  );
+}
