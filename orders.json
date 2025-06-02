@@ -146,6 +146,11 @@
     "date": null,
     "massage": "",
     "createdAt": "2025-06-02T14:38:40.977Z",
-    "taken": false
+    "taken": true,
+    "takenBy": {
+      "id": 683203214,
+      "firstName": "Максим",
+      "username": "grangym"
+    }
   }
 ]

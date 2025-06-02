@@ -157,7 +157,7 @@ export default function BookingForm({ selectedMassage }: BookingFormProps) {
                 className="w-full p-3 outline-none bg-transparent text-white placeholder-gray-400 focus:placeholder-gray-500"
               />
             </div>
-            <p className="text-xs text-gray-300 mt-2 italic">Не обязательно, мы перезвоним вам</p>
+            <p className="text-xs text-gray-300 mt-2 italic">Не обязательно, мы перезвоним вам!</p>
           </div>
         )}
 
