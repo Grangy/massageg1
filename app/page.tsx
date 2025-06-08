@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -26,6 +25,8 @@ export default function HomePage() {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [formStatus, setFormStatus] = useState<"idle" | "success" | "error">("idle");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [phoneError, setPhoneError] = useState("");
 
   const closePopup = () => setIsPopupOpen(false);
 
@@ -34,17 +35,43 @@ export default function HomePage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const validatePhone = (value: string) => {
+    const cleanedValue = value.replace(/\D/g, "");
+    if (cleanedValue.length < 8) {
+      return "Номер телефона должен содержать минимум 8 цифр";
+    }
+    if (cleanedValue.length > 11) {
+      return "Номер телефона должен содержать максимум 11 цифр";
+    }
+    if (!/^\d+$/.test(cleanedValue)) {
+      return "Номер телефона должен содержать только цифры";
+    }
+    return "";
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setPhone(value);
+    const error = validatePhone(value);
+    setPhoneError(error);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const error = validatePhone(phone);
+    setPhoneError(error);
+
+    if (error) return;
+
     setIsSubmitting(true);
     const form = e.target as HTMLFormElement;
-    const phone = (form.elements.namedItem("phone") as HTMLInputElement).value;
+    const phoneValue = (form.elements.namedItem("phone") as HTMLInputElement).value;
 
     try {
       const res = await fetch("/api/book-appointment", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: "Промо", phone, date: new Date().toISOString() }),
+        body: JSON.stringify({ name: "Промо", phone: phoneValue, date: new Date().toISOString() }),
       });
       const data = await res.json();
 
@@ -54,6 +81,8 @@ export default function HomePage() {
           closePopup();
           setFormStatus("idle");
           setIsSubmitting(false);
+          setPhone("");
+          setPhoneError("");
         }, 3000);
       } else {
         setFormStatus("error");
@@ -125,15 +154,22 @@ export default function HomePage() {
                     type="tel"
                     id="phone"
                     name="phone"
-                    className="mb-4 p-2 border border-stone-300 bg-stone-100 text-stone-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 transition-all"
+                    className={`mb-2 p-2 border ${
+                      phoneError ? "border-red-500" : "border-stone-300"
+                    } bg-stone-100 text-stone-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-stone-500 transition-all`}
                     placeholder="+7 (___) ___-__-__"
+                    value={phone}
+                    onChange={handlePhoneChange}
                     required
                     disabled={isSubmitting}
                   />
+                  {phoneError && (
+                    <p className="text-red-500 text-sm mb-2">{phoneError}</p>
+                  )}
                   <button
                     type="submit"
                     className="py-2 px-4 bg-stone-700 text-white rounded-lg hover:bg-stone-600 transition-colors disabled:bg-stone-400 disabled:cursor-not-allowed flex items-center justify-center"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !!phoneError}
                   >
                     {isSubmitting ? (
                       <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2" />
